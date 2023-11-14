@@ -55,11 +55,10 @@ ConsoleWidget::ConsoleWidget(MainWindow *main)
     ui->rzInputLineEdit->setTextMargins(10, 0, 0, 0);
     ui->debugeeInputLineEdit->setTextMargins(10, 0, 0, 0);
 
-    setupFont();
+    terminalDisplay = new TerminalDisplay(ui->terminalArea);
+    ui->terminalArea->layout()->addWidget(terminalDisplay);
 
-    // Adjust text margins of consoleOutputTextEdit
-    QTextDocument *console_docu = ui->outputTextEdit->document();
-    console_docu->setDocumentMargin(10);
+    setupFont();
 
     // Ctrl+` and ';' to toggle console widget
     QAction *toggleConsole = toggleViewAction();
@@ -74,7 +73,7 @@ ConsoleWidget::ConsoleWidget(MainWindow *main)
     });
 
     QAction *actionClear = new QAction(tr("Clear Output"), this);
-    connect(actionClear, &QAction::triggered, ui->outputTextEdit, &QPlainTextEdit::clear);
+    connect(actionClear, &QAction::triggered, terminalDisplay, &TerminalDisplayBase::clear);
     addAction(actionClear);
 
     // Ctrl+l to clear the output
@@ -82,7 +81,7 @@ ConsoleWidget::ConsoleWidget(MainWindow *main)
     actionClear->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     actions.append(actionClear);
 
-    actionWrapLines = new QAction(tr("Wrap Lines"), ui->outputTextEdit);
+    actionWrapLines = new QAction(tr("Wrap Lines"), terminalDisplay);
     actionWrapLines->setCheckable(true);
     setWrap(QSettings().value(consoleWrapSettingsKey, true).toBool());
     connect(actionWrapLines, &QAction::triggered, this, [this](bool checked) { setWrap(checked); });
@@ -100,8 +99,8 @@ ConsoleWidget::ConsoleWidget(MainWindow *main)
     updateCompletion();
 
     // Set console output context menu
-    ui->outputTextEdit->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui->outputTextEdit, &QWidget::customContextMenuRequested, this,
+    terminalDisplay->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(terminalDisplay, &QWidget::customContextMenuRequested, this,
             &ConsoleWidget::showCustomContextMenu);
 
     // Esc clears rzInputLineEdit and debugeeInputLineEdit (like OmniBar)
@@ -183,19 +182,20 @@ QWidget *ConsoleWidget::widgetToFocusOnRaise()
 
 void ConsoleWidget::setupFont()
 {
-    ui->outputTextEdit->setFont(Config()->getFont());
+    terminalDisplay->setFont(Config()->getFont());
 }
 
 void ConsoleWidget::addOutput(const QString &msg)
 {
-    ui->outputTextEdit->appendPlainText(msg);
+    terminalDisplay->AddOutput(msg);
     scrollOutputToEnd();
 }
 
 void ConsoleWidget::addDebugOutput(const QString &msg)
 {
     if (debugOutputEnabled) {
-        ui->outputTextEdit->appendHtml("<font color=\"red\"> [DEBUG]:\t" + msg + "</font>");
+        QString formattedMessage = "\033[31m [DEBUG]:\t" + msg + "\033[0m";
+        terminalDisplay->AddOutput(formattedMessage);
         scrollOutputToEnd();
     }
 }
@@ -203,18 +203,6 @@ void ConsoleWidget::addDebugOutput(const QString &msg)
 void ConsoleWidget::focusInputLineEdit()
 {
     ui->rzInputLineEdit->setFocus();
-}
-
-void ConsoleWidget::removeLastLine()
-{
-    ui->outputTextEdit->setFocus();
-    QTextCursor cur = ui->outputTextEdit->textCursor();
-    ui->outputTextEdit->moveCursor(QTextCursor::End, QTextCursor::MoveAnchor);
-    ui->outputTextEdit->moveCursor(QTextCursor::StartOfLine, QTextCursor::MoveAnchor);
-    ui->outputTextEdit->moveCursor(QTextCursor::End, QTextCursor::KeepAnchor);
-    ui->outputTextEdit->textCursor().removeSelectedText();
-    ui->outputTextEdit->textCursor().deletePreviousChar();
-    ui->outputTextEdit->setTextCursor(cur);
 }
 
 void ConsoleWidget::executeCommand(const QString &command)
@@ -232,7 +220,7 @@ void ConsoleWidget::executeCommand(const QString &command)
             QSharedPointer<CommandTask>(new CommandTask(command, CommandTask::ColorMode::MODE_16M));
     connect(commandTask.data(), &CommandTask::finished, this,
             [this, cmd_line, command, oldOffset](const QString &result) {
-                ui->outputTextEdit->appendHtml(CutterCore::ansiEscapeToHtml(result));
+                terminalDisplay->AddOutput(result);
                 scrollOutputToEnd();
                 historyAdd(command);
                 commandTask.clear();
@@ -277,8 +265,7 @@ void ConsoleWidget::setWrap(bool wrap)
 {
     QSettings().setValue(consoleWrapSettingsKey, wrap);
     actionWrapLines->setChecked(wrap);
-    ui->outputTextEdit->setLineWrapMode(wrap ? QPlainTextEdit::WidgetWidth
-                                             : QPlainTextEdit::NoWrap);
+    terminalDisplay->setWrap(wrap);
 }
 
 void ConsoleWidget::on_rzInputLineEdit_returnPressed()
@@ -308,11 +295,11 @@ void ConsoleWidget::on_execButton_clicked()
 
 void ConsoleWidget::showCustomContextMenu(const QPoint &pt)
 {
-    actionWrapLines->setChecked(ui->outputTextEdit->lineWrapMode() == QPlainTextEdit::WidgetWidth);
+    actionWrapLines->setChecked(terminalDisplay->wrap());
 
-    QMenu *menu = new QMenu(ui->outputTextEdit);
+    QMenu *menu = new QMenu(terminalDisplay);
     menu->addActions(actions);
-    menu->exec(ui->outputTextEdit->mapToGlobal(pt));
+    menu->exec(terminalDisplay->mapToGlobal(pt));
     menu->deleteLater();
 }
 
@@ -400,8 +387,7 @@ void ConsoleWidget::clear()
 
 void ConsoleWidget::scrollOutputToEnd()
 {
-    const int maxValue = ui->outputTextEdit->verticalScrollBar()->maximum();
-    ui->outputTextEdit->verticalScrollBar()->setValue(maxValue);
+    terminalDisplay->scrollToEnd();
 }
 
 void ConsoleWidget::historyAdd(const QString &input)
@@ -429,10 +415,7 @@ void ConsoleWidget::processQueuedOutput()
             fprintf(origStderr, "%s", output.toStdString().c_str());
         }
 
-        // Get the last segment that wasn't overwritten by carriage return
-        output = output.trimmed();
-        output = output.remove(0, output.lastIndexOf('\r')).trimmed();
-        ui->outputTextEdit->appendHtml(CutterCore::ansiEscapeToHtml(output));
+        terminalDisplay->AddOutput(output);
         scrollOutputToEnd();
     }
 }

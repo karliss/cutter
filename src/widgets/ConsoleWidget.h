@@ -5,6 +5,7 @@
 #include "CutterDockWidget.h"
 #include "common/CommandTask.h"
 #include "common/DirectionalComboBox.h"
+#include "widgets/TerminalDisplay.h"
 
 #include <QStringListModel>
 #include <QSocketNotifier>
@@ -71,7 +72,6 @@ private:
     void scrollOutputToEnd();
     void historyAdd(const QString &input);
     void invalidateHistoryPosition();
-    void removeLastLine();
     void executeCommand(const QString &command);
     void sendToStdin(const QString &input);
     void setWrap(bool wrap);
@@ -85,6 +85,7 @@ private:
     QSharedPointer<CommandTask> commandTask;
 
     std::unique_ptr<Ui::ConsoleWidget> ui;
+    TerminalDisplayBase* terminalDisplay;
     QAction *actionWrapLines;
     QList<QAction *> actions;
     bool debugOutputEnabled;
