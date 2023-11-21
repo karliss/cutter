@@ -55,7 +55,8 @@ ConsoleWidget::ConsoleWidget(MainWindow *main)
     ui->rzInputLineEdit->setTextMargins(10, 0, 0, 0);
     ui->debugeeInputLineEdit->setTextMargins(10, 0, 0, 0);
 
-    terminalDisplay = new TerminalDisplay(ui->terminalArea);
+    //terminalDisplay = new TerminalDisplay(ui->terminalArea);
+    terminalDisplay = new QTerminalDisplay(ui->terminalArea);
     ui->terminalArea->layout()->addWidget(terminalDisplay);
 
     setupFont();
@@ -212,7 +213,7 @@ void ConsoleWidget::executeCommand(const QString &command)
     }
     ui->rzInputLineEdit->setEnabled(false);
 
-    QString cmd_line = "[" + RzAddressString(Core()->getOffset()) + "]> " + command;
+    QString cmd_line = "[" + RzAddressString(Core()->getOffset()) + "]> " + command + "\n";
     addOutput(cmd_line);
 
     RVA oldOffset = Core()->getOffset();
@@ -240,7 +241,7 @@ void ConsoleWidget::sendToStdin(const QString &input)
 #ifndef Q_OS_WIN
     write(stdinFile, (input + "\n").toStdString().c_str(), input.size() + 1);
     fsync(stdinFile);
-    addOutput("Sent input: '" + input + "'");
+    addOutput("Sent input: '" + input + "'\n");
 #else
     // Stdin redirection isn't currently available in windows because console applications
     // with stdin already get their own console window with stdin when they are launched
@@ -411,9 +412,9 @@ void ConsoleWidget::processQueuedOutput()
     while (pipeSocket->canReadLine()) {
         QString output = QString(pipeSocket->readLine());
 
-        if (origStderr) {
+        /*if (origStderr) {
             fprintf(origStderr, "%s", output.toStdString().c_str());
-        }
+        }*/
 
         terminalDisplay->AddOutput(output);
         scrollOutputToEnd();
@@ -433,11 +434,14 @@ void ConsoleWidget::redirectOutput()
         return;
     }
 
-    pipeSocket = new QLocalSocket(this);
+    pipeSocket = new QLocalSocket();
+    fprintf(stderr, "originerrTest1\n");
 
     origStdin = fdopen(dup(fileno(stdin)), "r");
     origStderr = fdopen(dup(fileno(stderr)), "a");
     origStdout = fdopen(dup(fileno(stdout)), "a");
+    fprintf(origStderr, "originerrTest2\n");
+    fflush(origStderr);
 #ifdef Q_OS_WIN
     QString pipeName = QString::fromLatin1(PIPE_NAME).arg(QUuid::createUuid().toString());
 
@@ -452,26 +456,96 @@ void ConsoleWidget::redirectOutput()
 
     pipeSocket->connectToServer(pipeName, QIODevice::ReadOnly);
 #else
+    /*if (socketpair(AF_LOCAL, SOCK_STREAM |  SOCK_NONBLOCK, 0, redirectPipeFds)) {
+        addOutput("socketpair failed\n");
+    }
+    stdinFile = redirectPipeFds[PIPE_READ];*/
     pipe(redirectPipeFds);
+    int readPipe[2];
+    pipe(readPipe);
+
+    fcntl(redirectPipeFds[PIPE_READ], F_SETFL, O_ASYNC | O_NONBLOCK);
+    stdinFile = readPipe[PIPE_WRITE];
+    //fcntl(readPipe[PIPE_READ], F_SETFL, O_ASYNC | O_NONBLOCK);
+    /*pipe(redirectPipeFds);
     stdinFifoPath = QString(STDIN_PIPE_NAME).arg(QDir::tempPath(), QUuid::createUuid().toString());
     mkfifo(stdinFifoPath.toStdString().c_str(), (mode_t)0777);
-    stdinFile = open(stdinFifoPath.toStdString().c_str(), O_RDWR | O_ASYNC);
+    stdinFile = open(stdinFifoPath.toStdString().c_str(), O_RDWR | O_ASYNC);*/
 
-    dup2(stdinFile, fileno(stdin));
-    dup2(redirectPipeFds[PIPE_WRITE], fileno(stderr));
-    dup2(redirectPipeFds[PIPE_WRITE], fileno(stdout));
+    if (dup2(readPipe[PIPE_READ], fileno(stdin)) < 0) {
+        addOutput("dup2 1 failed\n");
+    }
+    if (dup2(redirectPipeFds[PIPE_WRITE], fileno(stderr)) < 0) {
+        addOutput("dup2 2 failed\n");
+    };
+    if (dup2(redirectPipeFds[PIPE_WRITE], fileno(stdout)) < 0) {
+        addOutput("dup2 3 failed\n");
+    };
 
     // Attempt to force line buffering to avoid calling processQueuedOutput
     // for partial lines
-    setlinebuf(stderr);
-    setlinebuf(stdout);
+    //setlinebuf(stderr);
+    //setlinebuf(stdout);
 
     // Configure the pipe to work in async mode
-    fcntl(redirectPipeFds[PIPE_READ], F_SETFL, O_ASYNC | O_NONBLOCK);
+    //fcntl(redirectPipeFds[PIPE_READ], F_SETFL, O_ASYNC | O_NONBLOCK);
 
     pipeSocket->setSocketDescriptor(redirectPipeFds[PIPE_READ]);
-    pipeSocket->connectToServer(QIODevice::ReadOnly);
+    pipeSocket->connectToServer(QIODevice::ReadWrite);
+
+    pipeSocket->moveToThread(&moveThread);
+    connect(&moveThread, &QThread::finished, pipeSocket, &QObject::deleteLater);
+    {
+        auto pipeSocket = this->pipeSocket;
+        auto terminalDisplay = this->terminalDisplay;
+        auto origStderr = this->origStderr;
+
+        int terminalDisplayFd = -1;
+        if (auto td = dynamic_cast<QTerminalDisplay*>(terminalDisplay)) {
+            terminalDisplayFd = td->getFd();
+
+        }
+
+        if (terminalDisplayFd > 0) {
+            connect(pipeSocket, &QIODevice::readyRead, pipeSocket, [pipeSocket, terminalDisplayFd, origStderr](){
+                while (pipeSocket->canReadLine()) {
+                    auto output = QString(pipeSocket->readLine()).toUtf8();
+                    if (origStderr) {
+                        fprintf(origStderr, "%s", output.toStdString().c_str());
+                    }
+                    write(terminalDisplayFd, output.data(), output.size());
+                    // TODO: use nonblocking write here
+                    //scrollOutputToEnd();
+                }
+            }, Qt::QueuedConnection);
+        } else {
+            connect(pipeSocket, &QIODevice::readyRead, pipeSocket, [pipeSocket, terminalDisplay, origStderr](){
+                if (origStderr) {
+                    fprintf(origStderr, "got somedata\n");
+                    fflush(origStderr);
+                }
+                while (pipeSocket->canReadLine()) {
+                    QString output = QString(pipeSocket->readLine());
+                    if (origStderr) {
+                        fprintf(origStderr, "%s", output.toStdString().c_str());
+                    }
+                    QMetaObject::invokeMethod(terminalDisplay,  [output, terminalDisplay](){
+                                terminalDisplay->AddOutput(output);
+                            } ,Qt::QueuedConnection);
+                    //scrollOutputToEnd();
+                }
+            }, Qt::QueuedConnection);
+        }
+    }
+    connect(terminalDisplay, &TerminalDisplayBase::dataAvailable, this, [this](QByteArray data){
+        write(stdinFile, data.data(), data.size());
+        fsync(stdinFile);
+    });
+    fprintf(origStderr, "originerrTest\n");
+    fflush(origStderr);
+    moveThread.start();
+
 #endif
 
-    connect(pipeSocket, &QIODevice::readyRead, this, &ConsoleWidget::processQueuedOutput);
+    //connect(pipeSocket, &QIODevice::readyRead, this, &ConsoleWidget::processQueuedOutput, Qt::QueuedConnection);
 }

@@ -101,6 +101,7 @@ private:
     FILE *origStdout = nullptr;
     FILE *origStdin = nullptr;
     QLocalSocket *pipeSocket = nullptr;
+    QThread moveThread;
 #ifdef Q_OS_WIN
     HANDLE hRead;
     HANDLE hWrite;

@@ -174,7 +174,7 @@ void MainWindow::initUI()
      */
 
     // Period goes to command entry
-    QShortcut *cmd_shortcut = new QShortcut(QKeySequence(Qt::Key_Period), this);
+    /*QShortcut *cmd_shortcut = new QShortcut(QKeySequence(Qt::Key_Period), this);
     connect(cmd_shortcut, &QShortcut::activated, consoleDock, &ConsoleWidget::focusInputLineEdit);
 
     // G and S goes to goto entry
@@ -189,7 +189,7 @@ void MainWindow::initUI()
             &MainWindow::seekToFunctionLastInstruction);
     QShortcut *seek_to_func_start_shortcut = new QShortcut(QKeySequence(Qt::Key_AsciiCircum), this);
     connect(seek_to_func_start_shortcut, &QShortcut::activated, this,
-            &MainWindow::seekToFunctionStart);
+            &MainWindow::seekToFunctionStart);*/
 
     QShortcut *refresh_shortcut = new QShortcut(QKeySequence(QKeySequence::Refresh), this);
     connect(refresh_shortcut, &QShortcut::activated, this, &MainWindow::refreshAll);
@@ -1693,6 +1693,11 @@ void MainWindow::on_actionAnalyze_triggered()
 
 void MainWindow::on_actionImportPDB_triggered()
 {
+
+    p1.setInputChannelMode(QProcess::ForwardedInputChannel);
+    p1.setProcessChannelMode(QProcess::ForwardedChannels);
+    p1.start("/home/karlis/pr_os/cutteri/bin/rizin");
+    return;
     QFileDialog dialog(this);
     dialog.setWindowTitle(tr("Select PDB file"));
     dialog.setNameFilters({ tr("PDB file (*.pdb)"), tr("All files (*)") });

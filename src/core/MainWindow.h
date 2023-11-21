@@ -14,6 +14,7 @@
 
 #include <QMainWindow>
 #include <QList>
+#include <QProcess>
 
 class CutterCore;
 class Omnibar;
@@ -329,6 +330,7 @@ private:
     MemoryDockWidget *lastSyncMemoryWidget = nullptr;
     MemoryDockWidget *lastMemoryWidget = nullptr;
     int functionDockWidthToRestore = 0;
+    QProcess p1;
 };
 
 #endif // MAINWINDOW_H

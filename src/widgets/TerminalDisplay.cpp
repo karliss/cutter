@@ -4,6 +4,9 @@
 
 #include <QVBoxLayout>
 #include <QScrollBar>
+#if defined(CUTTER_ENABLE_QTERMWIDGET)
+#include <qtermwidget5/qtermwidget.h>
+#endif
 
 TerminalDisplay::TerminalDisplay(QWidget *parent) : TerminalDisplayBase { parent }
 {
@@ -61,3 +64,54 @@ QPlainTextEdit *TerminalDisplay::TextWidget()
 {
     return outputTextEdit;
 }
+
+#if defined(CUTTER_ENABLE_QTERMWIDGET)
+QTerminalDisplay::QTerminalDisplay(QWidget *parent) : TerminalDisplayBase(parent)
+{
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    this->setContentsMargins(0, 0, 0, 0);
+    auto layout = new QVBoxLayout(this);
+    setLayout(layout);
+
+    termWidget = new QTermWidget(0, parent);
+    layout->addWidget(termWidget);
+    termWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    termWidget->setContextMenuPolicy(Qt::NoContextMenu);
+
+    qDebug() << "eeeeeeeee00000000\n";
+    connect(termWidget, &QTermWidget::sendData, this, [this](const char* data, int l){
+        qDebug() << "eeeeeeeee\n";
+        emit dataAvailable(QByteArray(data, l));
+    });
+    termWidget->startTerminalTeletype();
+}
+
+void QTerminalDisplay::AddOutput(const QString &input) {
+    auto data = input.toUtf8();
+    write(termWidget->getPtySlaveFd(), data.data(), data.size());
+}
+
+void QTerminalDisplay::clear() {
+    termWidget->clear();
+}
+
+void QTerminalDisplay::setWrap(bool value) {
+
+}
+
+bool QTerminalDisplay::wrap() {
+    return false;
+}
+
+void QTerminalDisplay::setFont(const QFont &font) {
+    termWidget->setTerminalFont(font);
+}
+
+void QTerminalDisplay::scrollToEnd() {
+    termWidget->scrollToEnd();
+}
+
+int QTerminalDisplay::getFd() {
+    return termWidget->getPtySlaveFd();
+}
+#endif // CUTTER_ENABLE_QTERMWIDGET

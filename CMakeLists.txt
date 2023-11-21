@@ -159,6 +159,10 @@ else()
     set(KSYNTAXHIGHLIGHTING_STATUS OFF)
 endif()
 
+
+find_package(qtermwidget5 REQUIRED)
+set (CUTTER_ENABLE_QTERMWIDGET ${qtermwidget5_FOUND})
+
 if (CUTTER_ENABLE_GRAPHVIZ)
     if (CUTTER_ENABLE_GRAPHVIZ STREQUAL AUTO)
         find_package(Graphviz)
@@ -179,6 +183,7 @@ message(STATUS "- Python: ${CUTTER_ENABLE_PYTHON}")
 message(STATUS "- Python Bindings: ${CUTTER_ENABLE_PYTHON_BINDINGS}")
 message(STATUS "- KSyntaxHighlighting: ${KSYNTAXHIGHLIGHTING_STATUS}")
 message(STATUS "- Graphviz: ${CUTTER_ENABLE_GRAPHVIZ}")
+message(STATUS "- Qtermwidget: ${CUTTER_ENABLE_QTERMWIDGET}")
 message(STATUS "- Downloads dependencies: ${CUTTER_ENABLE_DEPENDENCY_DOWNLOADS}")
 message(STATUS "- Enable Packaging: ${CUTTER_ENABLE_PACKAGING}")
 message(STATUS "- Package Dependencies: ${CUTTER_PACKAGE_DEPENDENCIES}")
