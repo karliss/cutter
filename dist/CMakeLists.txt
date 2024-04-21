@@ -158,6 +158,9 @@ if(CUTTER_ENABLE_DEPENDENCY_DOWNLOADS AND (NOT WIN32))
 		else()
 			set (YARA_PLUGIN_OPTIONS "")
 		endif()
+		if (CUTTER_QT6)
+			set (YARA_PLUGIN_OPTIONS "${YARA_PLUGIN_OPTIONS} -DCUTTER_QT6=ON")
+		endif()
 		install(CODE "
 			execute_process(COMMAND
 							\"${CMAKE_CURRENT_SOURCE_DIR}/../scripts/rz-libyara.sh\"
