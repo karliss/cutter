@@ -56,8 +56,8 @@ jobs:
             system-deps: false
             package: true
             tarball: false
-            cc-override: default
-            cxx-override: default
+            cc-override: '/usr/bin/gcc-9'
+            cxx-override: '/usr/bin/g++-9'
           - name: tarball
             python-version: 3.6.x
             image: ubuntu:20.04
@@ -160,6 +160,13 @@ jobs:
                              qt6-l10n-tools \
                              gcc-12 \
                              g++-12
+        fi
+        if [ "${{ matrix.name }}" = "linux-x86_64" ]; then
+          # install additional packages needed for appimage
+          apt-get -y install software-properties-common libclang-10-dev llvm-10 clang-10
+          add-apt-repository ppa:savoury1/gcc-defaults-9
+          apt update
+          apt install -y g++-9
         fi
     - uses: actions/setup-python@v4
       with:
