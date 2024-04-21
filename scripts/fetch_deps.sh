@@ -6,7 +6,7 @@ cd $(dirname "${BASH_SOURCE[0]}")/..
 mkdir -p cutter-deps && cd cutter-deps
 
 DEPS_FILE_linux_x86_64=cutter-deps-linux-x86_64.tar.gz
-DEPS_SHA256_linux_x86_64=0721c85548bbcf31f6911cdb2227e5efb4a20c34262672d4cd2193db166b2f8c
+DEPS_SHA256_linux_x86_64=2c5fa4fc510d8e41ed889dc98498ede899d6bac09bce9f07f83cb5c15a6a601b
 
 DEPS_FILE_macos_x86_64=cutter-deps-macos-x86_64.tar.gz
 DEPS_SHA256_macos_x86_64=0a23fdec3012a8af76675d6f3ff39cf9df9b08c13d1156fb7ffcc0e495c9407f
@@ -17,7 +17,7 @@ DEPS_SHA256_macos_arm64=f9b9a5569bd23c9b5e45836b82aba7576a5c53df4871380a55c370b9
 DEPS_FILE_win_x86_64=cutter-deps-win-x86_64.tar.gz
 DEPS_SHA256_win_x86_64=9ab4e89732a3df0859a26fd5de6d9f3cb80106cbe2539340af831ed298625076
 
-DEPS_BASE_URL=https://github.com/rizinorg/cutter-deps/releases/download/v15
+DEPS_BASE_URL=https://github.com/karliss/cutter-deps/releases/download/qt6-test
 
 ARCH=x86_64
 if [ "$OS" == "Windows_NT" ]; then

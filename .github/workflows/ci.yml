@@ -204,8 +204,8 @@ jobs:
             -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
             -DCUTTER_ENABLE_PYTHON=ON \
-            -DPYTHON_LIBRARY="$CUTTER_DEPS_PYTHON_PREFIX/lib/libpython3.9.so" \
-            -DPYTHON_INCLUDE_DIR="$CUTTER_DEPS_PYTHON_PREFIX/include/python3.9" \
+            -DPYTHON_LIBRARY="$CUTTER_DEPS_PYTHON_PREFIX/lib/libpython3.11.so" \
+            -DPYTHON_INCLUDE_DIR="$CUTTER_DEPS_PYTHON_PREFIX/include/python3.11" \
             -DPYTHON_EXECUTABLE="$CUTTER_DEPS_PYTHON_PREFIX/bin/python3" \
             -DCUTTER_ENABLE_PYTHON_BINDINGS=ON \
             -DCUTTER_ENABLE_GRAPHVIZ=ON \
@@ -255,7 +255,7 @@ jobs:
             -executable=./appdir/usr/bin/python3 \
             -appimage \
             -no-strip -exclude-libs=libnss3.so,libnssutil3.so,libqjp2.so \
-            -ignore-glob=usr/lib/python3.9/**/* \
+            -ignore-glob=usr/lib/python3.11/**/* \
             -verbose=2
           find ./appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
           export APPIMAGE_FILE="Cutter-${PACKAGE_ID}-Linux-x86_64.AppImage"

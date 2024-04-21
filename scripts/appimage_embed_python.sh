@@ -5,7 +5,7 @@ if ! [[ $# -eq 1 ]]; then
     exit 1
 fi
 
-python_version=python3.9
+python_version=python3.11
 
 python_prefix=$(pkg-config --variable=prefix python3)
 appdir=$1
@@ -22,9 +22,9 @@ rm -r lib/$python_version/test lib/$python_version/idlelib lib/$python_version/c
 
 echo "Checking if PySide2 is available"
 
-pyside_prefix=$(pkg-config --variable=prefix pyside2)
+pyside_prefix=$(pkg-config --variable=prefix pyside6)
 if [ $? -ne 0 ]; then
-	echo "PySide2 is not available, ignoring."
+	echo "PySide6 is not available, ignoring."
 	exit 0
 fi
 
