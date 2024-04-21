@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 
 SCRIPTPATH=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 INSTALL_PREFIX="$1"

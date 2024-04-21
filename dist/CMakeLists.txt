@@ -160,6 +160,7 @@ if(CUTTER_ENABLE_DEPENDENCY_DOWNLOADS AND (NOT WIN32))
 		endif()
 		if (CUTTER_QT6)
 			set (YARA_PLUGIN_OPTIONS "${YARA_PLUGIN_OPTIONS} -DCUTTER_QT6=ON")
+			message(STATUS "adding yara qt6")
 		endif()
 		install(CODE "
 			execute_process(COMMAND
