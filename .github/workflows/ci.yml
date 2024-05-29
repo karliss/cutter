@@ -29,12 +29,15 @@ jobs:
       matrix:
         name: [
             linux-x86_64,
+            linux-x86_64-qt5,
             linux-x86_64-system-deps,
             linux-x86_64-qt6-system-deps,
             tarball
         ]
         include:
           - qt-major: 6
+            cc-override: default
+            cxx-override: default
           - name: linux-x86_64-system-deps # ensure that Cutter can be built at least in basic config on Ubuntu 18.04 using sytem libraries
             image: ubuntu:18.04
             python-version: 3.6.x
@@ -52,14 +55,12 @@ jobs:
             tarball: false
             cc-override: '/usr/bin/gcc-12'
             cxx-override: '/usr/bin/g++-12'
-          - name: linux-x86_64
+          - name: linux-x86_64-qt5
             image: ubuntu:18.04
             python-version: 3.6.x
             system-deps: false
             package: true
             tarball: false
-            cc-override: default
-            cxx-override: default
             qt-major: 5
           - name: linux-x86_64
             image: ubuntu:20.04
@@ -67,8 +68,6 @@ jobs:
             system-deps: false
             package: true
             tarball: false
-            cc-override: default
-            cxx-override: default
           - name: tarball
             python-version: 3.6.x
             image: ubuntu:20.04
@@ -214,7 +213,7 @@ jobs:
             -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
             -DCUTTER_ENABLE_PYTHON=ON \
-            -DPython_ROOT_DIR="$CUTTER_DEPS_PYTHON_PREFIX" \
+            -DPython3_ROOT_DIR="$CUTTER_DEPS_PYTHON_PREFIX" \
             -DCUTTER_ENABLE_PYTHON_BINDINGS=ON \
             -DCUTTER_ENABLE_GRAPHVIZ=ON \
             -DCUTTER_USE_BUNDLED_RIZIN=ON \
@@ -378,7 +377,7 @@ jobs:
         PACKAGE_NAME=Cutter-${PACKAGE_ID}-macOS-${{ matrix.arch }}
         cmake \
                 -DCMAKE_BUILD_TYPE=Release \
-                -DPython_ROOT_DIR="${CUTTER_DEPS_PYTHON_PREFIX}" \
+                -DPython3_ROOT_DIR="${CUTTER_DEPS_PYTHON_PREFIX}" \
                 -DCUTTER_ENABLE_PYTHON=ON \
                 -DCUTTER_ENABLE_PYTHON_BINDINGS=ON \
                 -DCUTTER_USE_BUNDLED_RIZIN=ON \
