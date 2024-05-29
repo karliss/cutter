@@ -318,7 +318,7 @@ jobs:
             windows-x86_64,
         ]
         include:
-          - python-version: [3.7.x]
+          - python-version: 3.7.x
           - name: windows-x86_64
             os: windows-2019
             package: true
