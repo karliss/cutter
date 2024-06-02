@@ -5,6 +5,8 @@ SCRIPTPATH=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 INSTALL_PREFIX="$1"
 EXTRA_CMAKE_OPTS="$2"
 
+echo "Extra cmake opts:  $EXTRA_CMAKE_OPTS"
+
 cd "$SCRIPTPATH/.."
 
 if [[ ! -d rz_libyara ]]; then

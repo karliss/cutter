@@ -215,6 +215,7 @@ jobs:
         if [ "${{ matrix.system-deps }}" = "false" ]
         then
           locale
+          locale -a
           cmake \
             -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
@@ -386,6 +387,7 @@ jobs:
         cmake \
                 -DCMAKE_BUILD_TYPE=Release \
                 -DPython3_ROOT_DIR="${CUTTER_DEPS_PYTHON_PREFIX}" \
+                -DPython_ROOT_DIR="${CUTTER_DEPS_PYTHON_PREFIX}" \
                 -DCUTTER_ENABLE_PYTHON=ON \
                 -DCUTTER_ENABLE_PYTHON_BINDINGS=ON \
                 -DCUTTER_USE_BUNDLED_RIZIN=ON \
