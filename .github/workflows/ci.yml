@@ -229,7 +229,7 @@ jobs:
             -DCUTTER_PACKAGE_RZ_SILHOUETTE=ON \
             -DCMAKE_INSTALL_PREFIX=appdir/usr \
             -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
-            -DCUTTER_QT6=${{ matrix.system-deps == 6 && 'ON' || 'OFF' }} \
+            -DCUTTER_QT6=${{ matrix.system-deps == '6' && 'ON' || 'OFF' }} \
             ..
         elif [ "${{ matrix.image }}" = "ubuntu:22.04" ]
         then
@@ -317,7 +317,7 @@ jobs:
             windows-x86_64,
         ]
         include:
-          - python-version: 3.12.x
+          - python-version: 3.11.x
           - name: windows-x86_64
             os: windows-2019
             package: true
