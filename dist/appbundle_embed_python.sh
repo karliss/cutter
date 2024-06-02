@@ -32,7 +32,7 @@ install_name_tool -change `otool -L "$executable" | sed -n "s/^[[:blank:]]*\([^[
 
 echo "Checking if PySide is available"
 
-pyside_prefix=$(pkg-config --variable=prefix pyside2)
+pyside_prefix=$(pkg-config --variable=prefix pyside6)
 if [ $? -ne 0 ]; then
 	echo "PySide is not available, ignoring."
 	exit 0
@@ -46,5 +46,5 @@ then
     cd .. # $appbundle/Contents/Frameworks
     cp -va "$pyside_prefix/lib/"*.dylib .
 else
-    echo "site-packages/Pyside2 exists, skipping copying"
+    echo "site-packages/Pyside6 exists, skipping copying"
 fi
