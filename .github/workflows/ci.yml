@@ -216,6 +216,8 @@ jobs:
         then
           locale
           locale -a
+          export LANG="C.UTF-8"
+          export LC_ALL="C.UTF-8"
           cmake \
             -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
