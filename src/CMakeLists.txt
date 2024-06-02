@@ -438,7 +438,7 @@ if(CUTTER_ENABLE_PYTHON_BINDINGS)
             COMMAND "${SHIBOKEN_COMMAND}" --project-file="${BINDINGS_BUILD_DIR}/bindings.txt" ${SHIBOKEN_OPTIONS} ${SHIBOKEN_EXTRA_OPTIONS}
             DEPENDS "${BINDINGS_BUILD_DIR}/bindings.xml" "${BINDINGS_BUILD_DIR}/bindings.txt"
             IMPLICIT_DEPENDS CXX "${CMAKE_CURRENT_SOURCE_DIR}/bindings/bindings.h"
-            COMMENT "Generating Python bindings with shiboken2")
+            COMMENT "Generating Python bindings with ${SHIBOKEN_COMMAND}")
 else()
     set(BINDINGS_SOURCE "")
 endif()

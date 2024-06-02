@@ -55,14 +55,14 @@ jobs:
             tarball: false
             cc-override: '/usr/bin/gcc-12'
             cxx-override: '/usr/bin/g++-12'
-          - name: linux-x86_64-qt5
+          - name: linux-x86_64-qt5 # qt5 Appimage build for increased compatibility with older distros
             image: ubuntu:18.04
             python-version: 3.6.x
             system-deps: false
             package: true
             tarball: false
             qt-major: 5
-          - name: linux-x86_64
+          - name: linux-x86_64 # main Appimage build
             image: ubuntu:20.04
             python-version: 3.6.x
             system-deps: false
@@ -152,6 +152,11 @@ jobs:
                              llvm-8
           ln -s /usr/bin/llvm-config-8 /usr/bin/llvm-config
         fi
+        if [ "${{ matrix.image }}" = "ubuntu:20.04" ] && [ "${{ matrix.system-deps }}" = "false" ]; then
+          # install additional packages needed for appimage
+          apt-get -y install libclang-11-dev \
+                             llvm-11 \
+        fi
         if [ "${{ matrix.image }}" = "ubuntu:18.04" ] && [ "${{ matrix.system-deps }}" = "true" ]; then
           apt-get -y install qt5-default \
                              libqt5svg5-dev \
@@ -209,6 +214,7 @@ jobs:
         cd build
         if [ "${{ matrix.system-deps }}" = "false" ]
         then
+          locale
           cmake \
             -G Ninja \
             -DCMAKE_BUILD_TYPE=Release \
@@ -323,7 +329,7 @@ jobs:
             package: true
             system-deps: false
           - name: macos-x86_64
-            os: macos-14-large
+            os: macos-13
             arch: x86_64
             system-deps: false
             package: true

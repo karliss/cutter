@@ -5,7 +5,7 @@ if ! [[ $# -eq 1 ]]; then
     exit 1
 fi
 
-python_version=python3.9
+python_version=python3.12
 
 python_prefix=$(pkg-config --variable=prefix python3)
 appdir=$1
@@ -20,11 +20,11 @@ echo "Cleaning up embedded Python"
 find . | grep -E "(__pycache__|\.pyc|\.pyo$)" | xargs rm -rf
 rm -r lib/$python_version/test lib/$python_version/idlelib lib/$python_version/curses lib/$python_version/lib2to3
 
-echo "Checking if PySide2 is available"
+echo "Checking if PySide is available"
 
-pyside_prefix=$(pkg-config --variable=prefix pyside2)
+pyside_prefix=$(pkg-config --variable=prefix pyside6)
 if [ $? -ne 0 ]; then
-	echo "PySide2 is not available, ignoring."
+	echo "PySide is not available, ignoring."
 	exit 0
 fi
 

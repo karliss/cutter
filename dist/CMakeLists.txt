@@ -104,7 +104,7 @@ if(APPLE)
 
 	if(CUTTER_PACKAGE_DEPENDENCIES AND CUTTER_ENABLE_PYTHON)
 		set(EMBED_PYTHON_SH "${CMAKE_CURRENT_SOURCE_DIR}/appbundle_embed_python.sh")
-		set(PYTHON_FRAMEWORK_DIR "${CUTTER_DEPS}/python/Python.framework")
+		set(PYTHON_FRAMEWORK_DIR "${CUTTER_DEPS}/python/Library/Frameworks/Python.framework")
 		set(PYSIDE_PREFIX "${CUTTER_DEPS}/pyside")
 		configure_file("${CMAKE_CURRENT_SOURCE_DIR}/MacOSBundlePython.cmake.in"
 			"${CMAKE_CURRENT_BINARY_DIR}/MacOSBundlePython.cmake" @ONLY)
