@@ -229,7 +229,7 @@ jobs:
             -DCUTTER_PACKAGE_RZ_SILHOUETTE=ON \
             -DCMAKE_INSTALL_PREFIX=appdir/usr \
             -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
-            -DCUTTER_QT6=${{ matrix.qt-major == 6 && 'ON' || 'OFF' }} \
+            -DCUTTER_QT6=${{ matrix.qt-major == '6' && 'ON' || 'OFF' }} \
             ..
         elif [ "${{ matrix.image }}" = "ubuntu:22.04" ]
         then
@@ -367,7 +367,7 @@ jobs:
       shell: bash
       if: contains(matrix.os, 'macos')
       run: |
-        export MACOSX_DEPLOYMENT_TARGET=10.14
+        export MACOSX_DEPLOYMENT_TARGET=10.15
         scripts/fetch_deps.sh
         source cutter-deps/env.sh
         set -euo pipefail
