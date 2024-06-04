@@ -383,10 +383,10 @@ jobs:
         source cutter-deps/env.sh
         set -euo pipefail
         export PATH=/usr/local/opt/llvm/bin:$PATH
-        # TODO: remove this before merging, temporary workaround to avoid updating cutterdeps/env.sh
         mkdir build
         cd build
         PACKAGE_NAME=Cutter-${PACKAGE_ID}-macOS-${{ matrix.arch }}
+        # for explanation of -DCPACK_COMMAND_HDITUL sudo see  https://github.com/actions/runner-images/issues/7522
         cmake \
                 -DCMAKE_BUILD_TYPE=Release \
                 -DPython3_ROOT_DIR="${CUTTER_DEPS_PYTHON_PREFIX}" \
@@ -403,9 +403,10 @@ jobs:
                 -DCUTTER_PACKAGE_RZ_LIBSWIFT=ON \
                 -DCUTTER_PACKAGE_RZ_LIBYARA=ON \
                 -DCUTTER_PACKAGE_RZ_SILHOUETTE=ON \
+                -DCUTTER_QT6=ON \
                 -DCPACK_PACKAGE_FILE_NAME="$PACKAGE_NAME" \
                 -DCPACK_BUNDLE_APPLE_CERT_APP="-" \
-                -DCUTTER_QT6=ON \
+                -DCPACK_COMMAND_HDIUTIL "/usr/bin/sudo /usr/bin/hdiutil" \
                 .. && \
               make -j4;
         make package
