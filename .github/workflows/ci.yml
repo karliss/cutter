@@ -156,6 +156,7 @@ jobs:
           # install additional packages needed for appimage
           apt-get -y install libclang-11-dev \
                              llvm-11 \
+                             libsm6 \
                              libgl1-mesa-dev
         fi
         if [ "${{ matrix.image }}" = "ubuntu:18.04" ] && [ "${{ matrix.system-deps }}" = "true" ]; then
