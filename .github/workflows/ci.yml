@@ -406,7 +406,7 @@ jobs:
                 -DCUTTER_QT6=ON \
                 -DCPACK_PACKAGE_FILE_NAME="$PACKAGE_NAME" \
                 -DCPACK_BUNDLE_APPLE_CERT_APP="-" \
-                -DCPACK_COMMAND_HDIUTIL "/usr/bin/sudo /usr/bin/hdiutil" \
+                -DCPACK_COMMAND_HDIUTIL="/usr/bin/sudo /usr/bin/hdiutil" \
                 .. && \
               make -j4;
         make package
