@@ -276,7 +276,7 @@ jobs:
             -no-strip -exclude-libs=libnss3.so,libnssutil3.so,libqjp2.so \
             -ignore-glob=usr/lib/python3.12/**/* \
             -verbose=2
-          find ./appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
+          # find ./appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
           if [ "${{ matrix.qt-major }}" == "5" ]; then
             export APPIMAGE_FILE="Cutter-${PACKAGE_ID}-Linux-Qt5-x86_64.AppImage"
           else
