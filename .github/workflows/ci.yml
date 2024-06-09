@@ -454,8 +454,8 @@ jobs:
           -DCMAKE_VERBOSE_MAKEFILE=ON ^
           -G Ninja ^
           ..
-        cmake --build . --config Release -j 1
-        cmake --build . --config Release --target package -j 1
+        cmake --build . --config Release
+        cmake --build . --config Release --target package
         echo PACKAGE_NAME=%PACKAGE_NAME%.zip >> %GITHUB_ENV%
         echo PACKAGE_PATH=build/%PACKAGE_NAME%.zip >> %GITHUB_ENV%
         echo UPLOAD_ASSET_TYPE=application/zip >> %GITHUB_ENV%

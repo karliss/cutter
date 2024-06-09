@@ -228,10 +228,16 @@ if(CUTTER_PACKAGE_RZ_GHIDRA)
 							-DBUILD_CUTTER_PLUGIN=ON
 							-DBUILD_SLEIGH_PLUGIN=OFF
 							-DCMAKE_VERBOSE_MAKEFILE=ON
-							-G Ninja
 			)
 		if (SCRIPT_RESULT)
 			message(FATAL_ERROR \"Failed to configure rz-ghidra (returned \${SCRIPT_RESULT})\")
+		endif()
+		execute_process(WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/rz-ghidra-prefix/src/rz-ghidra-build
+			RESULT_VARIABLE SCRIPT_RESULT
+			COMMAND \${CMAKE_COMMAND} --build . --target -j 1
+			)
+		if (SCRIPT_RESULT)
+			message(FATAL_ERROR \"Failed to compile rz-ghidra plugin (returned \${SCRIPT_RESULT})\")
 		endif()
 		execute_process(WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/rz-ghidra-prefix/src/rz-ghidra-build
 			RESULT_VARIABLE SCRIPT_RESULT
@@ -240,6 +246,7 @@ if(CUTTER_PACKAGE_RZ_GHIDRA)
 		if (SCRIPT_RESULT)
 			message(FATAL_ERROR \"Failed to install rz-ghidra plugin (returned \${SCRIPT_RESULT})\")
 		endif()
+		message(STATUS \"Ghidra compilation finished.")
 	")
 endif()
 
