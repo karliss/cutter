@@ -246,7 +246,7 @@ if(CUTTER_PACKAGE_RZ_GHIDRA)
 		if (SCRIPT_RESULT)
 			message(FATAL_ERROR \"Failed to install rz-ghidra plugin (returned \${SCRIPT_RESULT})\")
 		endif()
-		message(STATUS \"Ghidra compilation finished.")
+		message(STATUS \"Ghidra compilation finished.\")
 	")
 endif()
 
