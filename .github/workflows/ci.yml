@@ -449,7 +449,6 @@ jobs:
           -DCMAKE_PREFIX_PATH="%CUTTER_DEPS%\pyside" ^
           -DCPACK_PACKAGE_FILE_NAME=%PACKAGE_NAME% ^
           -DCUTTER_QT6=ON ^
-          -DCMAKE_VERBOSE_MAKEFILE=ON ^
           -G Ninja ^
           ..
         cmake --build . --config Release

@@ -5,12 +5,10 @@ SCRIPTPATH=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 INSTALL_PREFIX="$1"
 EXTRA_CMAKE_OPTS="$2"
 
-echo "Extra cmake opts:  $EXTRA_CMAKE_OPTS"
-
 cd "$SCRIPTPATH/.."
 
 if [[ ! -d rz_libyara ]]; then
-    git clone https://github.com/karliss/rz-libyara.git --depth 1 --branch qt6 rz_libyara #TODO: restore before merge
+    git clone https://github.com/rizinorg/rz-libyara.git --depth 1 --branch main rz_libyara
     git -C rz_libyara submodule init
     git -C rz_libyara submodule update
 fi
