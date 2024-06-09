@@ -165,7 +165,6 @@ if(CUTTER_ENABLE_DEPENDENCY_DOWNLOADS AND (NOT WIN32))
 		endif()
 		if (CUTTER_QT6)
 			set (YARA_PLUGIN_OPTIONS "${YARA_PLUGIN_OPTIONS} -DCUTTER_QT6=ON")
-			message(STATUS "adding yara qt6")
 		endif()
 		install(CODE "
 			execute_process(COMMAND
@@ -232,26 +231,18 @@ if(CUTTER_PACKAGE_RZ_GHIDRA)
 							${GHIDRA_OPTIONS}
 							-DBUILD_CUTTER_PLUGIN=ON
 							-DBUILD_SLEIGH_PLUGIN=OFF
-							-DCMAKE_VERBOSE_MAKEFILE=ON
+							-G Ninja
 			)
 		if (SCRIPT_RESULT)
 			message(FATAL_ERROR \"Failed to configure rz-ghidra (returned \${SCRIPT_RESULT})\")
 		endif()
 		execute_process(WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/rz-ghidra-prefix/src/rz-ghidra-build
 			RESULT_VARIABLE SCRIPT_RESULT
-			COMMAND \${CMAKE_COMMAND} --build . -j 1
-			)
-		if (SCRIPT_RESULT)
-			message(FATAL_ERROR \"Failed to compile rz-ghidra plugin (returned \${SCRIPT_RESULT})\")
-		endif()
-		execute_process(WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/rz-ghidra-prefix/src/rz-ghidra-build
-			RESULT_VARIABLE SCRIPT_RESULT
-			COMMAND \${CMAKE_COMMAND} --build . --target install -j 1
+			COMMAND \${CMAKE_COMMAND} --build . --target install
 			)
 		if (SCRIPT_RESULT)
 			message(FATAL_ERROR \"Failed to install rz-ghidra plugin (returned \${SCRIPT_RESULT})\")
 		endif()
-		message(STATUS \"Ghidra compilation finished.\")
 	")
 endif()
 
