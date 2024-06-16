@@ -270,7 +270,7 @@ jobs:
           wget -c "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
           chmod a+x linuxdeployqt*.AppImage
           rm -fv "../cutter-deps/qt/plugins/imageformats/libqjp2.so"
-          ./linuxdeployqt*.AppImage ./appdir/usr/share/applications/*.desktop \
+          EXTRA_PLATFORM_PLUGINS="libqwayland-egl.so;libqwayland-generic.so" ./linuxdeployqt*.AppImage ./appdir/usr/share/applications/*.desktop \
             -executable=./appdir/usr/bin/python3 \
             -appimage \
             -no-strip -exclude-libs=libnss3.so,libnssutil3.so,libqjp2.so \
@@ -330,19 +330,18 @@ jobs:
         ]
         include:
           - python-version: 3.11.x
+          - system-deps: false
           - name: windows-x86_64
             os: windows-2019
             package: true
-            system-deps: false
+            python-version: 3.12.x
           - name: macos-x86_64
             os: macos-12
             arch: x86_64
-            system-deps: false
             package: true
           - name: macos-arm64
             os: macos-14
             arch: arm64
-            system-deps: false
             package: true
       # Prevent one job from pausing the rest
       fail-fast: false
