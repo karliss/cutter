@@ -270,11 +270,12 @@ jobs:
           wget -c "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
           chmod a+x linuxdeployqt*.AppImage
           rm -fv "../cutter-deps/qt/plugins/imageformats/libqjp2.so"
-          EXTRA_PLATFORM_PLUGINS="libqwayland-egl.so;libqwayland-generic.so" ./linuxdeployqt*.AppImage ./appdir/usr/share/applications/*.desktop \
+          ./linuxdeployqt*.AppImage ./appdir/usr/share/applications/*.desktop \
             -executable=./appdir/usr/bin/python3 \
             -appimage \
             -no-strip -exclude-libs=libnss3.so,libnssutil3.so,libqjp2.so \
             -ignore-glob=usr/lib/python3.12/**/* \
+            -extra-plugins="platforms/libqwayland-egl.so,platforms/libqwayland-generic.so,wayland-decoration-client,wayland-graphics-integration-client,wayland-shell-integration,wayland-graphics-integration-server" \
             -verbose=2
           find ./appdir -executable -type f -exec ldd {} \; | cut -d " " -f 2-3 | sort | uniq
           # find ./appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
@@ -361,7 +362,7 @@ jobs:
         brew bundle
     - name: py dependencies
       run: |
-        python3 -m pip install -U pip==21.3.1
+        #python3 -m pip install -U pip==21.3.1
         pip install meson==0.61.5 # https://github.com/rizinorg/cutter/runs/7170222817?check_suite_focus=true
     - name: Prepare package id
       shell: bash
