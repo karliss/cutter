@@ -157,6 +157,7 @@ jobs:
           apt-get -y install libclang-11-dev \
                              llvm-11 \
                              libsm6 \
+                             libwayland-egl1 \
                              libgl1-mesa-dev
         fi
         if [ "${{ matrix.image }}" = "ubuntu:18.04" ] && [ "${{ matrix.system-deps }}" = "true" ]; then
@@ -270,20 +271,27 @@ jobs:
           wget -c "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
           chmod a+x linuxdeployqt*.AppImage
           rm -fv "../cutter-deps/qt/plugins/imageformats/libqjp2.so"
-          ./linuxdeployqt*.AppImage ./appdir/usr/share/applications/*.desktop \
-            -executable=./appdir/usr/bin/python3 \
-            -appimage \
-            -no-strip -exclude-libs=libnss3.so,libnssutil3.so,libqjp2.so \
-            -ignore-glob=usr/lib/python3.12/**/* \
-            -extra-plugins="platforms/libqwayland-egl.so,platforms/libqwayland-generic.so,wayland-decoration-client,wayland-graphics-integration-client,wayland-shell-integration,wayland-graphics-integration-server" \
-            -verbose=2
-          find ./appdir -executable -type f -exec ldd {} \; | cut -d " " -f 2-3 | sort | uniq
-          # find ./appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
           if [ "${{ matrix.qt-major }}" == "5" ]; then
             export APPIMAGE_FILE="Cutter-${PACKAGE_ID}-Linux-Qt5-x86_64.AppImage"
+            ./linuxdeployqt*.AppImage ./appdir/usr/share/applications/*.desktop \
+              -executable=./appdir/usr/bin/python3 \
+              -appimage \
+              -no-strip -exclude-libs=libnss3.so,libnssutil3.so,libqjp2.so \
+              -ignore-glob=usr/lib/python3.12/**/* \
+              -verbose=2
           else
             export APPIMAGE_FILE="Cutter-${PACKAGE_ID}-Linux-x86_64.AppImage"
+            ./linuxdeployqt*.AppImage ./appdir/usr/share/applications/*.desktop \
+              -executable=./appdir/usr/bin/python3 \
+              -appimage \
+              -no-strip -exclude-libs=libnss3.so,libnssutil3.so,libqjp2.so \
+              -ignore-glob=usr/lib/python3.12/**/* \
+              -extra-plugins="platforms/libqwayland-egl.so,platforms/libqwayland-generic.so,wayland-decoration-client,wayland-graphics-integration-client,wayland-shell-integration,wayland-graphics-integration-server" \
+              -verbose=2
           fi
+          find ./appdir -executable -type f -exec ldd {} \; | cut -d " " -f 2-3 | sort | uniq
+          # find ./appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
+          
           mv Cutter-*-x86_64.AppImage "$APPIMAGE_FILE"
           echo PACKAGE_NAME=$APPIMAGE_FILE >> $GITHUB_ENV
           echo PACKAGE_PATH=build/$APPIMAGE_FILE >> $GITHUB_ENV
@@ -363,7 +371,8 @@ jobs:
     - name: py dependencies
       run: |
         #python3 -m pip install -U pip==21.3.1
-        pip install meson==0.61.5 # https://github.com/rizinorg/cutter/runs/7170222817?check_suite_focus=true
+        pip install meson # ==0.61.5 # https://github.com/rizinorg/cutter/runs/7170222817?check_suite_focus=true
+        pip install setuptools
     - name: Prepare package id
       shell: bash
       run: |
