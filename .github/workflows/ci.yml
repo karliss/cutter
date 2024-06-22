@@ -139,25 +139,24 @@ jobs:
           apt-get -y install gcc-7 \
                              libglu1-mesa-dev \
                              freeglut3-dev \
-                             mesa-common-dev
-
+                             mesa-common-dev \
+                             libclang-8-dev \
+                             llvm-8
+          ln -s /usr/bin/llvm-config-8 /usr/bin/llvm-config
         fi
         if [ "${{ matrix.image }}" = "ubuntu:18.04" ] || [ "${{ matrix.image }}" = "ubuntu:20.04" ]; then
           # install additional packages needed for appimage
           apt-get -y install libxcb1-dev \
                              libxkbcommon-dev \
                              libxcb-*-dev \
-                             libegl1 \
-                             libclang-8-dev \
-                             llvm-8
-          ln -s /usr/bin/llvm-config-8 /usr/bin/llvm-config
+                             libegl1
         fi
         if [ "${{ matrix.image }}" = "ubuntu:20.04" ] && [ "${{ matrix.system-deps }}" = "false" ]; then
           # install additional packages needed for appimage
           apt-get -y install libclang-11-dev \
                              llvm-11 \
                              libsm6 \
-                             libwayland-egl1 \
+                             libwayland-dev  \
                              libgl1-mesa-dev
         fi
         if [ "${{ matrix.image }}" = "ubuntu:18.04" ] && [ "${{ matrix.system-deps }}" = "true" ]; then
