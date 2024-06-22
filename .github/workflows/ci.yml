@@ -284,6 +284,7 @@ jobs:
               -executable=./appdir/usr/bin/python3 \
               -appimage \
               -no-strip -exclude-libs=libnss3.so,libnssutil3.so,libqjp2.so \
+              -ignore-glob=/lib/x86_64-linux-gnu//libwayland* \
               -ignore-glob=usr/lib/python3.12/**/* \
               -extra-plugins="platforms/libqwayland-egl.so,platforms/libqwayland-generic.so,wayland-decoration-client,wayland-graphics-integration-client,wayland-shell-integration,wayland-graphics-integration-server" \
               -verbose=2
