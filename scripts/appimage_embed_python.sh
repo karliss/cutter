@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-if ! [[ $# -eq 1 ]]; then
+if ! [[ $# -eq 2 ]]; then
     echo "Usage: $0 [appdir] [pyside_major]"
     exit 1
 fi
