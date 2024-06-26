@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euo pipefile
+set -euo pipefail
 
 if ! [[ $# -eq 1 ]]; then
     echo "Usage: $0 [appdir] [pyside_major]"
