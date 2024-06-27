@@ -7,13 +7,13 @@ if ! [[ $# -eq 2 ]]; then
     exit 1
 fi
 
-python_version=`python --version`
+python_prefix=$(pkg-config --variable=prefix python3)
+
+python_version=`$python_prefix/bin/python --version`
 python_version=${python_version##* }
 python_version=python${python_version%.*}
 
 pyside_major=$2
-
-python_prefix=$(pkg-config --variable=prefix python3)
 appdir=$1
 
 echo "Embedding Python from prefix $python_prefix in appdir $appdir"
