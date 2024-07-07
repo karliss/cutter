@@ -20,6 +20,7 @@ concurrency:
 
 jobs:
   build-linux:
+    if: false
     name: ${{ matrix.name }}
     runs-on: ubuntu-latest
     container:

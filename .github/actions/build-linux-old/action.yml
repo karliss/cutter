@@ -12,9 +12,9 @@ inputs:
     required: true
 runs:
   using: 'docker'
-  image: ${{ inputs.image }}
+  image: 'ubuntu:18:04'
   entrypoint: './.github/actions/build-linux-old/entrypoint.sh'
   args: 
     - ${{ inputs.system-deps }}
-    - ${{ inputs.system-image }}
+    - ${{ inputs.image }}
     - ${{ inputs.qt-major }}
