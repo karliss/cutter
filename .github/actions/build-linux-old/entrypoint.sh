@@ -161,7 +161,13 @@ then
     export CUTTER_VERSION=$(python ../scripts/get_version.py)
     export VERSION=$CUTTER_VERSION
     ninja install
-    "../scripts/appimage_embed_python.sh" appdir ${{ matrix.qt-major == '6' && '6' || '2' }}
+    if [ $qt_major == "6" ]
+    then
+        pyside_ver=6
+    else
+        pyside_ver=2
+    fi
+    "../scripts/appimage_embed_python.sh" appdir $pyside_ver
     APP_PREFIX=`pwd`/appdir/usr
     export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-}:$APP_PREFIX/lib/rizin/plugins"
     export PATH=$PATH:${APP_PREFIX}/bin
@@ -192,6 +198,8 @@ then
     
     mv Cutter-*-x86_64.AppImage "$APPIMAGE_FILE"
     echo PACKAGE_NAME=$APPIMAGE_FILE >> $GITHUB_ENV
+    echo PACKAGE_NAME=$APPIMAGE_FILE >> $GITHUB_OUTPUT
     echo PACKAGE_PATH=build/$APPIMAGE_FILE >> $GITHUB_ENV
+    echo PACKAGE_PATH=build/$APPIMAGE_FILE >> $GITHUB_OUTPUT
     echo UPLOAD_ASSET_TYPE=application/x-executable >> $GITHUB_ENV
 fi
