@@ -42,6 +42,9 @@ apt-get -y install libgraphviz-dev \
     pkg-config \
     git
 
+ls -alh
+who
+
 if [ "$image" = "ubuntu:18.04" ]; then
     # install additional packages needed for appimage
     apt-get -y install gcc-7 \

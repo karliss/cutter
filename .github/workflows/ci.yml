@@ -372,6 +372,9 @@ jobs:
         fi
         PACKAGE_ID=${PACKAGE_ID##refs/tags/}
         echo PACKAGE_ID=$PACKAGE_ID >> $GITHUB_ENV
+        ls -alh
+        who
+
     - name: build linux
       uses: ./.github/actions/build-linux-old
       with:
