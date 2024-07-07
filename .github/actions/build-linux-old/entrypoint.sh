@@ -176,7 +176,8 @@ then
     rm -fv "../cutter-deps/qt/plugins/imageformats/libqjp2.so"
     if [ "$qt_major" == "5" ]; then
     export APPIMAGE_FILE="Cutter-${PACKAGE_ID}-Linux-Qt5-x86_64.AppImage"
-    ./linuxdeployqt*.AppImage ./appdir/usr/share/applications/*.desktop \
+    ./linuxdeployqt*.AppImage --appimage-extract-and-run \
+        ./appdir/usr/share/applications/*.desktop \
         -executable=./appdir/usr/bin/python3 \
         -appimage \
         -no-strip -exclude-libs=libnss3.so,libnssutil3.so,libqjp2.so \
@@ -184,7 +185,8 @@ then
         -verbose=2
     else
     export APPIMAGE_FILE="Cutter-${PACKAGE_ID}-Linux-x86_64.AppImage"
-    ./linuxdeployqt*.AppImage ./appdir/usr/share/applications/*.desktop \
+    ./linuxdeployqt*.AppImage --appimage-extract-and-run \
+        ./appdir/usr/share/applications/*.desktop \
         -executable=./appdir/usr/bin/python3 \
         -appimage \
         -no-strip -exclude-libs=libnss3.so,libnssutil3.so,libqjp2.so \

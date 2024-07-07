@@ -16,7 +16,6 @@ inputs:
 runs:
   using: 'docker'
   image: 'ubuntu:18.04'
-  options: --privileged
   entrypoint: './.github/actions/build-linux-old/entrypoint.sh'
   args: 
     - ${{ inputs.system-deps }}
