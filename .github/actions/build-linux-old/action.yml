@@ -2,12 +2,19 @@ name: 'Build linux'
 description: 'Build cutter in a docker image'
 inputs: 
   system-deps:
-    description: 'Systemdeps'
+    description: 'Use system libraries instead of cutter-deps'
+    required: true
+  image:
+    description: 'Docker image'
+    required: true
+  qt-major:
+    description: 'Qt major version'
     required: true
 runs:
   using: 'docker'
-  image: 'ubuntu:18.04'
+  image: ${{ inputs.image }}
   entrypoint: './.github/actions/build-linux-old/entrypoint.sh'
   args: 
     - ${{ inputs.system-deps }}
-
+    - ${{ inputs.system-image }}
+    - ${{ inputs.qt-major }}
