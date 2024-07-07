@@ -378,6 +378,7 @@ jobs:
         system-deps: ${{ matrix.system-deps }}
         image: ${{ matrix.image }}
         qt-major: ${{ matrix.qt-major }}
+        package: ${{ matrix.package }}
 
     - uses: actions/upload-artifact@v3
       if: env.PACKAGE_NAME != null

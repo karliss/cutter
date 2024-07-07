@@ -6,7 +6,6 @@ pwd
 ls
 
 system_deps=$1
-image=$2
 
 #export TZ=UTC
 #ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -92,4 +91,102 @@ fi
 
 # https://github.com/rizinorg/cutter/runs/7170222817?check_suite_focus=true
 python3 -m pip install meson==0.61.5
-env | grep PACKAGE
+
+
+if [ "$system_deps" = "false" ]
+then
+    CUTTER_QT="$qt_major" scripts/fetch_deps.sh
+    . cutter-deps/env.sh
+    #export LD_LIBRARY_PATH="`llvm-config --libdir`:$LD_LIBRARY_PATH"
+fi
+#if [ "${{ matrix.cc-override }}" != "default" ]
+#then
+#    export CC="${{matrix.cc-override}}"
+#    export CXX="${{matrix.cxx-override}}"
+#fi
+
+if [ $qt_major = 6] 
+then
+    CMAKE_QT_ARG='ON'
+else
+    CMAKE_QT_ARG='OFF'
+fi
+
+mkdir build
+cd build
+if [ "$system_deps" = "false" ]
+then
+    locale
+    locale -a
+    export LANG="C.UTF-8"
+    export LC_ALL="C.UTF-8"
+    cmake \
+    -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCUTTER_ENABLE_PYTHON=ON \
+    -DPython3_ROOT_DIR="$CUTTER_DEPS_PYTHON_PREFIX" \
+    -DCUTTER_ENABLE_PYTHON_BINDINGS=ON \
+    -DCUTTER_ENABLE_GRAPHVIZ=ON \
+    -DCUTTER_USE_BUNDLED_RIZIN=ON \
+    -DCUTTER_APPIMAGE_BUILD=ON \
+    -DCUTTER_ENABLE_PACKAGING=ON \
+    -DCUTTER_ENABLE_KSYNTAXHIGHLIGHTING=OFF \
+    -DCUTTER_ENABLE_SIGDB=ON \
+    -DCUTTER_ENABLE_DEPENDENCY_DOWNLOADS=ON \
+    -DCUTTER_PACKAGE_RZ_GHIDRA=ON \
+    -DCUTTER_PACKAGE_JSDEC=ON \
+    -DCUTTER_PACKAGE_RZ_LIBSWIFT=ON \
+    -DCUTTER_PACKAGE_RZ_LIBYARA=ON \
+    -DCUTTER_PACKAGE_RZ_SILHOUETTE=ON \
+    -DCMAKE_INSTALL_PREFIX=appdir/usr \
+    -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON \
+    -DCUTTER_QT6=$CMAKE_QT_ARG \
+    ..
+else
+    cmake \
+    -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCUTTER_USE_BUNDLED_RIZIN=ON \
+    -DCUTTER_QT6=$CMAKE_QT_ARG \
+    ..
+fi
+ninja
+if [ "$package" = "true" ]
+then
+    export CUTTER_VERSION=$(python ../scripts/get_version.py)
+    export VERSION=$CUTTER_VERSION
+    ninja install
+    "../scripts/appimage_embed_python.sh" appdir ${{ matrix.qt-major == '6' && '6' || '2' }}
+    APP_PREFIX=`pwd`/appdir/usr
+    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$APP_PREFIX/lib/rizin/plugins"
+    export PATH=$PATH:${APP_PREFIX}/bin
+    wget -c "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
+    chmod a+x linuxdeployqt*.AppImage
+    rm -fv "../cutter-deps/qt/plugins/imageformats/libqjp2.so"
+    if [ "$qt_major" == "5" ]; then
+    export APPIMAGE_FILE="Cutter-${PACKAGE_ID}-Linux-Qt5-x86_64.AppImage"
+    ./linuxdeployqt*.AppImage ./appdir/usr/share/applications/*.desktop \
+        -executable=./appdir/usr/bin/python3 \
+        -appimage \
+        -no-strip -exclude-libs=libnss3.so,libnssutil3.so,libqjp2.so \
+        -ignore-glob=usr/lib/python3.12/**/* \
+        -verbose=2
+    else
+    export APPIMAGE_FILE="Cutter-${PACKAGE_ID}-Linux-x86_64.AppImage"
+    ./linuxdeployqt*.AppImage ./appdir/usr/share/applications/*.desktop \
+        -executable=./appdir/usr/bin/python3 \
+        -appimage \
+        -no-strip -exclude-libs=libnss3.so,libnssutil3.so,libqjp2.so \
+        -exclude-libs="libwayland-client.so,libwayland-egl.so,libwayland-cursor.so" \
+        -ignore-glob=usr/lib/python3.12/**/* \
+        -extra-plugins="platforms/libqwayland-egl.so,platforms/libqwayland-generic.so,wayland-decoration-client,wayland-graphics-integration-client,wayland-shell-integration,wayland-graphics-integration-server" \
+        -verbose=2
+    fi
+    find ./appdir -executable -type f -exec ldd {} \; | cut -d " " -f 2-3 | sort | uniq
+    # find ./appdir -executable -type f -exec ldd {} \; | grep " => /usr" | cut -d " " -f 2-3 | sort | uniq
+    
+    mv Cutter-*-x86_64.AppImage "$APPIMAGE_FILE"
+    echo PACKAGE_NAME=$APPIMAGE_FILE >> $GITHUB_ENV
+    echo PACKAGE_PATH=build/$APPIMAGE_FILE >> $GITHUB_ENV
+    echo UPLOAD_ASSET_TYPE=application/x-executable >> $GITHUB_ENV
+fi

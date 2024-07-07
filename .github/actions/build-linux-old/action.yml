@@ -10,11 +10,16 @@ inputs:
   qt-major:
     description: 'Qt major version'
     required: true
+  package:
+    description: 'Package appimage'
+    required: true
 runs:
   using: 'docker'
   image: 'ubuntu:18.04'
   entrypoint: './.github/actions/build-linux-old/entrypoint.sh'
   args: 
     - ${{ inputs.system-deps }}
-    - ${{ inputs.image }}
-    - ${{ inputs.qt-major }}
+  env:
+    package: ${{ inputs.package }}
+    qt_major: ${{ inputs.qt-major }}
+    image: ${{ inputs.image }}
