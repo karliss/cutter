@@ -6,7 +6,7 @@ inputs:
     required: true
 runs:
   using: 'docker'
-  image: 'ubuntu18.04'
+  image: 'ubuntu:18.04'
   entrypoint: './.github/actions/build-linux-old/entrypoint.sh'
   args: 
     - ${{ inputs.system-deps }}
