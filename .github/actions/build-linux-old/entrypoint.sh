@@ -158,7 +158,7 @@ then
     ninja install
     "../scripts/appimage_embed_python.sh" appdir ${{ matrix.qt-major == '6' && '6' || '2' }}
     APP_PREFIX=`pwd`/appdir/usr
-    export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$APP_PREFIX/lib/rizin/plugins"
+    export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-}:$APP_PREFIX/lib/rizin/plugins"
     export PATH=$PATH:${APP_PREFIX}/bin
     wget -c "https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage"
     chmod a+x linuxdeployqt*.AppImage
