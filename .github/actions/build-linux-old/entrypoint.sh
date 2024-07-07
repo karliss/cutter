@@ -39,7 +39,8 @@ apt-get -y install libgraphviz-dev \
     curl \
     libpcre2-dev \
     libfuse2 \
-    pkg-config
+    pkg-config \
+    git
 
 if [ "$image" = "ubuntu:18.04" ]; then
     # install additional packages needed for appimage
