@@ -21,7 +21,7 @@ tar -zxf "$GIT_VERSION.tar.gz"
 # build.
 #make -C "$GIT_VERSION" prefix=/usr install -j > "$GIT_VERSION/build.log"
 # ensure git is installed.
-git version
+#git version
 wget "https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-linux-x86_64.sh"
 bash ./cmake-$CMAKE_VERSION-linux-x86_64.sh --skip-license --prefix=/usr
 # ensure cmake is installed.
