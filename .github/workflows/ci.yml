@@ -360,10 +360,21 @@ jobs:
       with:
         submodules: recursive
         persist-credentials: false
+    - name: Prepare package id
+      shell: bash
+      run: |
+        if [ "${{ startsWith(github.event.ref, 'refs/tags')}}" = "true" ]
+        then
+          PACKAGE_ID="${{ github.event.ref }}"
+        else
+          PACKAGE_ID="git-`date "+%Y-%m-%d"`-${{ format('{0}', github.sha) }}"
+        fi
+        PACKAGE_ID=${PACKAGE_ID##refs/tags/}
+        echo PACKAGE_ID=$PACKAGE_ID >> $GITHUB_ENV
     - name: build linux
       uses: ./.github/actions/build-linux-old
       with:
-        system-deps: matrix.system-deps
+        system-deps: ${{ matrix.system-deps }}
 
     - uses: actions/upload-artifact@v3
       if: env.PACKAGE_NAME != null
@@ -394,9 +405,9 @@ jobs:
     strategy:
       matrix:
         name: [
-            macos-x86_64,
-            macos-arm64,
-            windows-x86_64,
+            #macos-x86_64,
+            #macos-arm64,
+            #windows-x86_64,
         ]
         include:
           - python-version: 3.11.x
