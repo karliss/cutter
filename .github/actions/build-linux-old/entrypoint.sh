@@ -5,8 +5,6 @@ set -euo pipefail
 pwd
 ls
 
-system_deps=$1
-
 #export TZ=UTC
 #ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
@@ -96,7 +94,9 @@ python3 -m pip install meson==0.61.5
 if [ "$system_deps" = "false" ]
 then
     CUTTER_QT="$qt_major" scripts/fetch_deps.sh
+    set +u # TODO: remove temp code after updating cutter_deps
     . cutter-deps/env.sh
+    set -u
     #export LD_LIBRARY_PATH="`llvm-config --libdir`:$LD_LIBRARY_PATH"
 fi
 #if [ "${{ matrix.cc-override }}" != "default" ]
