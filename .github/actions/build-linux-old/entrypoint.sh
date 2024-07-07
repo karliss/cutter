@@ -42,8 +42,6 @@ apt-get -y install libgraphviz-dev \
     pkg-config \
     git
 
-ls -alh
-who
 
 if [ "$image" = "ubuntu:18.04" ]; then
     # install additional packages needed for appimage
@@ -108,6 +106,9 @@ fi
 #    export CC="${{matrix.cc-override}}"
 #    export CXX="${{matrix.cxx-override}}"
 #fi
+
+# otherwise git complains about dubious ownership, due to code being checked out outside the container with a different user
+git config --global --add safe.directory /github/workspace/rizin
 
 if [ $qt_major = 6] 
 then
