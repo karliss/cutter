@@ -1,15 +1,17 @@
 #!/bin/bash
 
-set -euo pipefail
 
 pwd
 ls
-echo $@
+echo $# $@
 echo $1
 
 set system_deps=$1
 set image=$2
 
+echo $image
+
+set -euo pipefail
 #export TZ=UTC
 #ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
