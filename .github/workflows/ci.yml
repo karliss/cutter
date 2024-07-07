@@ -29,8 +29,8 @@ jobs:
       matrix:
         name: [
             linux-x86_64,
-            linux-x86_64-qt5,
-            linux-x86_64-system-deps,
+            #linux-x86_64-qt5,
+            #linux-x86_64-system-deps,
             linux-x86_64-qt6-system-deps,
             tarball
         ]
@@ -38,15 +38,15 @@ jobs:
           - qt-major: 6
             cc-override: default
             cxx-override: default
-          - name: linux-x86_64-system-deps # ensure that Cutter can be built at least in basic config on Ubuntu 18.04 using sytem libraries
-            image: ubuntu:18.04
-            python-version: 3.6.x
-            system-deps: true
-            package: false
-            tarball: false
-            cc-override: '/usr/bin/gcc-7'
-            cxx-override: '/usr/bin/g++-7'
-            qt-major: 5
+          #- name: linux-x86_64-system-deps # ensure that Cutter can be built at least in basic config on Ubuntu 18.04 using sytem libraries
+          #  image: ubuntu:18.04
+          #  python-version: 3.6.x
+          #  system-deps: true
+          #  package: false
+          #  tarball: false
+          #  cc-override: '/usr/bin/gcc-7'
+          #  cxx-override: '/usr/bin/g++-7'
+          #  qt-major: 5
           - name: linux-x86_64-qt6-system-deps # ensure that Cutter can be built at least in basic config on Ubuntu 22.04 using sytem libraries
             image: ubuntu:22.04
             python-version: 3.10.x
@@ -55,13 +55,13 @@ jobs:
             tarball: false
             cc-override: '/usr/bin/gcc-12'
             cxx-override: '/usr/bin/g++-12'
-          - name: linux-x86_64-qt5 # qt5 Appimage build for increased compatibility with older distros
-            image: ubuntu:18.04
-            python-version: 3.6.x
-            system-deps: false
-            package: true
-            tarball: false
-            qt-major: 5
+          #- name: linux-x86_64-qt5 # qt5 Appimage build for increased compatibility with older distros
+          #  image: ubuntu:18.04
+          #  python-version: 3.6.x
+          #  system-deps: false
+          #  package: true
+          #  tarball: false
+          #  qt-major: 5
           - name: linux-x86_64 # main Appimage build
             image: ubuntu:20.04
             python-version: 3.6.x
@@ -326,6 +326,66 @@ jobs:
           asset_path: ${{ env.PACKAGE_PATH }}
           asset_name: ${{ env.PACKAGE_NAME }}
           asset_content_type: ${{ env.UPLOAD_ASSET_TYPE }}
+  build-linux-old:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        name: [
+            linux-x86_64-qt5,
+            linux-x86_64-system-deps,
+        ]
+        include:
+          - qt-major: 6
+            cc-override: default
+            cxx-override: default
+          - name: linux-x86_64-system-deps # ensure that Cutter can be built at least in basic config on Ubuntu 18.04 using sytem libraries
+            image: ubuntu:18.04
+            python-version: 3.6.x
+            system-deps: true
+            package: false
+            cc-override: '/usr/bin/gcc-7'
+            cxx-override: '/usr/bin/g++-7'
+            qt-major: 5
+          - name: linux-x86_64-qt5 # qt5 Appimage build for increased compatibility with older distros
+            image: ubuntu:18.04
+            python-version: 3.6.x
+            system-deps: false
+            package: true
+            qt-major: 5
+      # Prevent one job from pausing the rest
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+        persist-credentials: false
+    - name: build linux
+      uses: ./.github/actions/build_linux
+      system-deps: matrix.system-deps
+
+    - uses: actions/upload-artifact@v3
+      if: env.PACKAGE_NAME != null
+      with:
+        name: ${{ env.PACKAGE_NAME }}
+        path: ${{ env.PACKAGE_PATH }}
+    - name: Get release
+      if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+      id: get_release
+      uses: rizinorg/gha-get-release@c8074dd5d13ddd0a194d8c9205a1466973c7dc0d
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload release assets
+      if: steps.get_release.outputs.upload_url != null && env.PACKAGE_NAME != null
+      uses: actions/upload-release-asset@v1.0.2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          asset_path: ${{ env.PACKAGE_PATH }}
+          asset_name: ${{ env.PACKAGE_NAME }}
+          asset_content_type: ${{ env.UPLOAD_ASSET_TYPE }}
+
 
   build:
     name: ${{ matrix.name }}
