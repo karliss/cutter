@@ -361,8 +361,9 @@ jobs:
         submodules: recursive
         persist-credentials: false
     - name: build linux
-      uses: ./.github/actions/build_linux
-      system-deps: matrix.system-deps
+      uses: ./.github/actions/build-linux-old
+      with:
+        system-deps: matrix.system-deps
 
     - uses: actions/upload-artifact@v3
       if: env.PACKAGE_NAME != null
