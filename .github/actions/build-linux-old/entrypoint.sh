@@ -4,6 +4,7 @@ set -euo pipefail
 
 pwd
 ls
+echo $@
 echo $1
 
 set system_deps=$1
