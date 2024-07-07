@@ -19,7 +19,7 @@ apt-get -y install wget libcurl4-gnutls-dev libexpat1-dev gettext libz-dev libss
 wget "https://www.kernel.org/pub/software/scm/git/$GIT_VERSION.tar.gz"
 tar -zxf "$GIT_VERSION.tar.gz"
 # build.
-make -C "$GIT_VERSION" prefix=/usr install -j > "$GIT_VERSION/build.log"
+#make -C "$GIT_VERSION" prefix=/usr install -j > "$GIT_VERSION/build.log"
 # ensure git is installed.
 git version
 wget "https://github.com/Kitware/CMake/releases/download/v$CMAKE_VERSION/cmake-$CMAKE_VERSION-linux-x86_64.sh"
