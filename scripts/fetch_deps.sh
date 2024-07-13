@@ -13,18 +13,18 @@ if [ "$CUTTER_QT" == "5" ]; then
 	DEPS_BASE_URL=https://github.com/rizinorg/cutter-deps/releases/download/v15
 else
 	DEPS_FILE_linux_x86_64=cutter-deps-linux-x86_64.tar.gz
-	DEPS_SHA256_linux_x86_64=1873ecdf00cb9250cb4514219bf713f86a09c0d607487b038e20f42592e2d291
+	DEPS_SHA256_linux_x86_64=c9292eda751ec6cef6454e1b702ca4f9942077aad7a2887bb828de5bc11a5e3a
 fi
 echo $DEPS_SHA256_linux_x86_64
 
 DEPS_FILE_macos_x86_64=cutter-deps-macos-x86_64.tar.gz
-DEPS_SHA256_macos_x86_64=8c973a4431965819de52d34cebcf609724726fc9d40b6eb2c961dc37300c73a7
+DEPS_SHA256_macos_x86_64=fa0a245f1c6cb89284b5dd5af7ac68b340814d6584cf891617f7f2ce8ae30c69
 
 DEPS_FILE_macos_arm64=cutter-deps-macos-arm64.tar.gz
-DEPS_SHA256_macos_arm64=d24a56711b7f5a61e2294c95b695cc4b8b9043797ca6793c3e2e85e7b2829aef
+DEPS_SHA256_macos_arm64=ebca9ada787a287161a7bd69b943ac93abd108a5a888242dbf7dd5710c2ab1b2
 
 DEPS_FILE_win_x86_64=cutter-deps-win-x86_64.tar.gz
-DEPS_SHA256_win_x86_64=9509521eb893fbe41eb94326b48a402822909114aef7ec1a2f89638d09d28ee2
+DEPS_SHA256_win_x86_64=6b730cc4fb17b1c4880e3ce1ce42fb07ac0e98905869c6bdc8d93a9b05b7db2d
 
 
 ARCH=x86_64
