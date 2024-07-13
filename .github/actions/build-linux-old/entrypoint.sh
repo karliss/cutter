@@ -62,10 +62,9 @@ if [ "$image" = "ubuntu:18.04" ] || [ "$image" = "ubuntu:20.04" ]; then
 fi
 if [ "$image" = "ubuntu:20.04" ] && [ "$system_deps" = "false" ]; then
     # install additional packages needed for appimage
-    apt-get -y install libclang-11-dev \
-                        llvm-11 \
+    apt-get -y install libclang-12-dev \
+                        llvm-12 \
                         libsm6 \
-
                         libwayland-dev  \
                         libgl1-mesa-dev
 fi
