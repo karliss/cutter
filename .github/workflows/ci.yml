@@ -464,6 +464,8 @@ jobs:
                 -DCMAKE_BUILD_TYPE=Release \
                 -DPython3_ROOT_DIR="${CUTTER_DEPS_PYTHON_PREFIX}" \
                 -DPython_ROOT_DIR="${CUTTER_DEPS_PYTHON_PREFIX}" \
+                -DPython3_FIND_STRATEGY="LOCATION" \
+                -DPython_FIND_STRATEGY="LOCATION" \
                 -DCUTTER_ENABLE_PYTHON=ON \
                 -DCUTTER_ENABLE_PYTHON_BINDINGS=ON \
                 -DCUTTER_USE_BUNDLED_RIZIN=ON \
@@ -478,7 +480,6 @@ jobs:
                 -DCUTTER_PACKAGE_RZ_SILHOUETTE=ON \
                 -DCPACK_PACKAGE_FILE_NAME="$PACKAGE_NAME" \
                 -DCPACK_BUNDLE_APPLE_CERT_APP="-" \
-                -DPython3_FIND_STRATEGY="LOCATION" \
                 -DCPACK_COMMAND_HDIUTIL="../dist/macos/hdiutil_wrapper.sh" \
                 .. && \
               make -j4;
