@@ -473,8 +473,8 @@ jobs:
                 -DCUTTER_ENABLE_SIGDB=ON \
                 -DCUTTER_PACKAGE_DEPENDENCIES=ON \
                 -DCUTTER_ENABLE_DEPENDENCY_DOWNLOADS=ON \
-                -DCUTTER_PACKAGE_RZ_GHIDRA=ON \
-                -DCUTTER_PACKAGE_JSDEC=ON \
+                -DCUTTER_PACKAGE_RZ_GHIDRA=OFF \
+                -DCUTTER_PACKAGE_JSDEC=OFF \
                 -DCUTTER_PACKAGE_RZ_LIBSWIFT=ON \
                 -DCUTTER_PACKAGE_RZ_LIBYARA=ON \
                 -DCUTTER_PACKAGE_RZ_SILHOUETTE=ON \
