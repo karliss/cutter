@@ -478,7 +478,8 @@ jobs:
                 -DCUTTER_PACKAGE_RZ_SILHOUETTE=ON \
                 -DCPACK_PACKAGE_FILE_NAME="$PACKAGE_NAME" \
                 -DCPACK_BUNDLE_APPLE_CERT_APP="-" \
-                -DCPACK_COMMAND_HDIUTIL="/usr/bin/hdiutil -debug" \
+                -DPython3_FIND_STRATEGY="LOCATION" \
+                -DCPACK_COMMAND_HDIUTIL="../dist/macos/hdiutil_wrapper.sh" \
                 .. && \
               make -j4;
         make package
